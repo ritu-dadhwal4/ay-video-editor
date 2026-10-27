@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AY Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap">
+<style>
+/* aboveyellow.com tokens (app/globals.css): greys, Geist, one yellow for status. */
+:root{
+  --ink:10 10 10;--ink-secondary:64 64 64;--ink-tertiary:115 115 115;--surface:255 255 255;--tint:245 245 245;
+  --hairline:rgba(10,10,10,.1);--hairline-soft:rgba(10,10,10,.06);--hairline-strong:rgba(10,10,10,.18);
+  --yellow:255 212 0;--yellow-ink:58 44 0;--green:63 122 79;--green-soft:237 245 239;
+  --radius-inner:12px;--radius-tile:16px;--radius-card:20px;--radius-panel:24px;--radius-control:9999px;
+  --shadow-hairline:0 1px 2px rgba(10,10,10,.04);--shadow-lift:0 8px 28px -12px rgba(10,10,10,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{font:400 .9375rem/1.5 Geist,system-ui,sans-serif;color:rgb(var(--ink));background:rgb(var(--surface));-webkit-font-smoothing:antialiased}
+button,select{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,label:focus-within{outline:2px solid rgb(var(--ink));outline-offset:2px}
+.top{display:flex;align-items:center;gap:8px;padding:14px 24px;border-bottom:1px solid var(--hairline)}
+.top i{width:24px;height:24px;border-radius:7px;background:rgb(var(--ink));display:grid;place-items:center;color:#fff;font:700 10px Geist;font-style:normal}
+.top b{font-weight:600}
+.top .sp{flex:1}
+.top .where{font-size:.75rem;color:rgb(var(--ink-tertiary))}
+main{max-width:1040px;margin:0 auto;padding:48px 24px 80px}
+h1{font-size:2.125rem;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.lede{color:rgb(var(--ink-secondary));font-size:1.0625rem;margin-top:8px;max-width:640px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.steps span{font-size:.8125rem;background:rgb(var(--tint));border-radius:var(--radius-control);padding:4px 12px;color:rgb(var(--ink-secondary))}
+.steps span b{font-weight:600;color:rgb(var(--ink));margin-right:4px}
+
+.up{margin-top:28px;border:1.5px dashed var(--hairline-strong);border-radius:var(--radius-panel);padding:40px 24px;display:grid;justify-items:center;gap:14px;text-align:center;transition:background .15s,border-color .15s}
+.up.over{background:rgb(var(--tint));border-color:rgb(var(--ink))}
+.up .big{width:52px;height:52px;border-radius:50%;background:rgb(var(--tint));display:grid;place-items:center;font-size:22px}
+.up h2{font-size:1.25rem;font-weight:600}
+.primary{height:44px;padding:0 22px;border-radius:var(--radius-control);background:rgb(var(--ink));color:#fff;font-weight:600;border:0;display:inline-flex;align-items:center}
+.primary:hover{background:rgb(var(--ink-secondary))}
+.pill{height:36px;padding:0 14px;border-radius:var(--radius-control);border:1px solid var(--hairline);background:rgb(var(--surface));font-weight:500;font-size:.8125rem}
+.limits{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;font-size:.8125rem;color:rgb(var(--ink-secondary))}
+.limits span::before{content:"✓ ";color:rgb(var(--green));font-weight:700}
+.lang{display:flex;gap:8px;align-items:center;font-size:.8125rem;color:rgb(var(--ink-secondary))}
+.lang select{height:32px;border:1px solid var(--hairline);border-radius:var(--radius-inner);padding:0 8px;background:rgb(var(--surface))}
+.private{font-size:.75rem;color:rgb(var(--ink-tertiary))}
+.err{background:rgb(var(--yellow));color:rgb(var(--yellow-ink));border-radius:var(--radius-inner);padding:10px 14px;font-size:.875rem;max-width:560px}
+.warn{background:rgb(var(--tint));border-radius:var(--radius-inner);padding:10px 14px;font-size:.875rem;max-width:560px;text-align:left}
+
+.work{margin-top:28px;border:1px solid var(--hairline);border-radius:var(--radius-panel);padding:28px;display:grid;gap:18px}
+.work h2{font-size:1.25rem;font-weight:600}
+.work .file{color:rgb(var(--ink-tertiary));font-size:.8125rem}
+.list{display:grid;gap:10px}
+.row{display:flex;gap:12px;align-items:center;font-size:.9375rem;color:rgb(var(--ink-tertiary))}
+.row i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--hairline-strong);display:grid;place-items:center;font-style:normal;font-size:12px;flex:none}
+.row.on{color:rgb(var(--ink));font-weight:500}
+.row.on i{border-color:rgb(var(--ink));border-top-color:transparent;animation:spin .8s linear infinite}
+.row.done{color:rgb(var(--ink))}
+.row.done i{background:rgb(var(--green));border-color:rgb(var(--green));color:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bar{height:6px;border-radius:9px;background:rgb(var(--tint));overflow:hidden}
+.bar b{display:block;height:100%;background:rgb(var(--ink));width:0;transition:width .2s}
+.hint{font-size:.8125rem;color:rgb(var(--ink-tertiary))}
+
+.yours{margin-top:48px}
+.yours h2{font-size:1.25rem;font-weight:600;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.card{border:1px solid var(--hairline);border-radius:var(--radius-card);overflow:hidden;text-decoration:none;color:inherit;display:grid;background:rgb(var(--surface))}
+.card:hover{border-color:var(--hairline-strong);box-shadow:var(--shadow-lift)}
+.card img{width:100%;aspect-ratio:9/16;object-fit:cover;background:rgb(var(--tint));display:block}
+.card .ph{width:100%;aspect-ratio:9/16;background:rgb(var(--tint));display:grid;place-items:center;font-size:.8125rem;color:rgb(var(--ink-tertiary));padding:12px;text-align:center}
+.card div.t{padding:10px 12px 12px}
+.card b{display:block;font-weight:600;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card span{font-size:.75rem;color:rgb(var(--ink-tertiary))}
+.badge{display:inline-block;font:600 10px Geist;letter-spacing:.04em;text-transform:uppercase;border-radius:6px;padding:2px 6px;background:rgb(var(--green-soft));color:rgb(var(--green));margin-left:4px}
+.empty{color:rgb(var(--ink-tertiary));font-size:.875rem}
+.small{display:none}
+@media (max-width:899px){ .small{display:block;margin:0 0 20px;background:rgb(var(--yellow));color:rgb(var(--yellow-ink));border-radius:var(--radius-inner);padding:12px 14px;font-size:.875rem} }
+</style>
+</head>
+<body>
+<header class="top"><i>AY</i><b>AY Video Editor</b><span class="sp"></span><span class="where" id="where"></span></header>
+<main>
+  <p class="small">AY Video Editor is made for a computer screen. Open it on your laptop or desktop.</p>
+  <h1>Turn one take into a finished reel</h1>
+  <p class="lede">Upload a video of you talking to camera. You'll take out the pauses and mistakes, add captions, a hook, sounds and a cover, then export it, in six short steps.</p>
+  <div class="steps"><span><b>1</b>Cut</span><span><b>2</b>Captions</span><span><b>3</b>Hook</span><span><b>4</b>Sounds</span><span><b>5</b>Thumbnail</span><span><b>6</b>Export</span></div>
+
+  <section id="pick">
+    <label class="up" id="drop">
+      <span class="big" aria-hidden="true">↑</span>
+      <h2>Drop your video here</h2>
+      <span class="primary">Choose a video</span>
+      <input type="file" id="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.m4v,.webm" hidden>
+      <div class="limits" id="limits"></div>
+      <span class="private">Your video stays on this computer. Nothing is uploaded to the internet.</span>
+    </label>
+    <div style="display:flex;justify-content:center;margin-top:14px" class="lang"><label for="lang">Language you speak in the video</label>
+      <select id="lang"><option value="en">English</option><option value="hi">Hindi</option></select></div>
+    <div id="msg" style="display:grid;justify-items:center;gap:10px;margin-top:14px"></div>
+  </section>
+
+  <section class="work" id="work" hidden>
+    <div><h2>Getting your video ready</h2><p class="file" id="wfile"></p></div>
+    <div class="list" id="stages"></div>
+    <div class="bar" id="bar" hidden><b></b></div>
+    <p class="hint" id="whint">This takes about a minute for a 30-second video. You can keep this tab open and do something else.</p>
+  </section>
+
+  <section class="yours">
+    <h2>Your videos</h2>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id)
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+const dur = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+const ago = (ms) => { const m = Math.round((Date.now() - ms) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago` }
+let LIM = null
+
+async function home() {
+  const r = await fetch('/api/home').then((x) => x.json())
+  LIM = r.limits
+  $('where').textContent = `Saved in ${r.workspace.replace(/^\/Users\/[^/]+/, '~')}`
+  $('limits').innerHTML = [
+    'MP4, MOV or WebM',
+    `${LIM.minSeconds} seconds to ${LIM.maxSeconds / 60} minutes`,
+    `Up to ${Math.round(LIM.maxBytes / 1024 / 1024 / 1024)} GB`,
+    'Vertical 9:16 works best',
+    'One person talking to camera',
+  ].map((t) => `<span>${t}</span>`).join('')
+  const g = $('grid')
+  g.innerHTML = r.projects.length ? '' : '<p class="empty">Videos you upload will show up here.</p>'
+  r.projects.forEach((p) => {
+    const a = document.createElement('a')
+    a.className = 'card'
+    a.href = p.preparing ? '#' : `/edit/${encodeURIComponent(p.name)}`
+    a.innerHTML = p.preparing
+      ? `<div class="ph">${p.error ? 'Could not prepare: ' + esc(p.error) : esc(p.stage) + '…'}</div><div class="t"><b>${esc(p.name)}</b><span>${p.error ? 'Try uploading again' : 'Getting ready'}</span></div>`
+      : `<img src="${p.cover}" alt="" loading="lazy"><div class="t"><b>${esc(p.title)}</b><span>${dur(p.duration)} · edited ${ago(p.updated)}${p.rendered ? '<span class="badge">Exported</span>' : ''}</span></div>`
+    g.append(a)
+  })
+}
+
+/* Checks before anything is copied, so a wrong file fails in a second, not after an upload. */
+function readDuration(file) {
+  return new Promise((res) => {
+    const v = document.createElement('video')
+    v.preload = 'metadata'
+    const done = (x) => { URL.revokeObjectURL(v.src); res(x) }
+    v.onloadedmetadata = () => done({ d: v.duration, w: v.videoWidth, h: v.videoHeight })
+    v.onerror = () => done(null) // e.g. HEVC this browser can't open: the server checks instead
+    setTimeout(() => done(null), 6000)
+    v.src = URL.createObjectURL(file)
+  })
+}
+function say(html, kind = 'err') { $('msg').innerHTML = html ? `<div class="${kind}">${html}</div>` : '' }
+
+async function choose(file) {
+  say('')
+  if (!file) return
+  const ext = (file.name.split('.').pop() || '').toLowerCase()
+  if (!LIM.types.includes(ext)) return say(`That's a .${esc(ext)} file. Choose an MP4, MOV or WebM video.`)
+  if (file.size > LIM.maxBytes) return say(`That video is ${Math.round(file.size / 1024 / 1024)} MB. The limit is ${Math.round(LIM.maxBytes / 1024 / 1024 / 1024)} GB. Export it at 1080p and try again.`)
+  const m = await readDuration(file)
+  if (m && m.d > LIM.maxSeconds + 1) return say(`That video is ${dur(m.d)} long. The limit is ${LIM.maxSeconds / 60} minutes. Trim it first, then upload it again.`)
+  if (m && m.d < LIM.minSeconds) return say(`That video is only ${m.d.toFixed(1)} seconds. It needs at least ${LIM.minSeconds}.`)
+  if (m && m.w > m.h && !confirm('This video is landscape. AY makes vertical 9:16 reels, so the middle of your video will be used and the sides cropped.\n\nContinue?')) return
+  upload(file, m)
+}
+
+const STAGES = ['Uploading', 'Preparing your video', 'Writing down every word', 'Finding your face', 'Ready']
+function stages(cur) {
+  $('stages').innerHTML = STAGES.map((s, i) => `<div class="row ${i < cur ? 'done' : i === cur ? 'on' : ''}"><i>${i < cur ? '✓' : ''}</i>${s}</div>`).join('')
+}
+function upload(file, m) {
+  $('pick').hidden = true; $('work').hidden = false
+  $('wfile').textContent = `${file.name}${m ? ` · ${dur(m.d)}` : ''} · ${Math.round(file.size / 1024 / 1024)} MB`
+  stages(0); $('bar').hidden = false
+  const x = new XMLHttpRequest()
+  x.open('POST', `/api/video?file=${encodeURIComponent(file.name)}&lang=${$('lang').value}`)
+  x.upload.onprogress = (e) => { if (e.lengthComputable) $('bar').firstChild.style.width = Math.round((e.loaded / e.total) * 100) + '%' }
+  x.onload = () => {
+    let r = {}
+    try { r = JSON.parse(x.responseText) } catch {}
+    if (x.status !== 200) return back(r.error || 'That upload did not work. Try again.')
+    $('bar').hidden = true
+    follow(r.name)
+  }
+  x.onerror = () => back('The upload stopped. Is the editor still running?')
+  x.send(file)
+}
+function back(err) { $('work').hidden = true; $('pick').hidden = false; say(esc(err)); home() }
+function follow(name) {
+  stages(1)
+  const t = setInterval(async () => {
+    const s = await fetch(`/api/prepare?name=${encodeURIComponent(name)}`).then((x) => x.json()).catch(() => null)
+    if (!s) return
+    stages(STAGES.indexOf(s.stage) >= 1 ? STAGES.indexOf(s.stage) : 1)
+    if (s.done) {
+      clearInterval(t)
+      if (!s.ok) return back(s.error || 'Something went wrong while preparing the video.')
+      stages(4)
+      setTimeout(() => { location.href = `/edit/${encodeURIComponent(name)}` }, 500)
+    }
+  }, 1000)
+}
+
+const drop = $('drop')
+$('file').onchange = (e) => choose(e.target.files[0])
+;['dragenter', 'dragover'].forEach((k) => drop.addEventListener(k, (e) => { e.preventDefault(); drop.classList.add('over') }))
+;['dragleave', 'drop'].forEach((k) => drop.addEventListener(k, (e) => { e.preventDefault(); drop.classList.remove('over') }))
+drop.addEventListener('drop', (e) => choose(e.dataTransfer.files[0]))
+home()
+</script>
+</body>
+</html>

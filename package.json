@@ -1,0 +1,10 @@
+{
+  "name": "ay-video-editor",
+  "private": true,
+  "type": "module",
+  "description": "AY Video Editor skill: transcribe, cut, style and render talking-head reels on your own computer.",
+  "dependencies": {
+    "@mediapipe/tasks-vision": "0.10.14",
+    "puppeteer-core": "23.11.1"
+  }
+}

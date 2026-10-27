@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AY Video Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800;900&family=Montserrat:wght@500;700;800&family=DM+Sans:wght@500;700;800&family=Poppins:wght@500;700;800&family=Syne:wght@500;700;800&family=Jost:wght@500;700&family=Anton&family=Archivo+Black&family=Caveat:wght@500;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Bodoni+Moda:ital@0;1&family=DM+Serif+Display:ital@0;1&family=Fraunces:ital@0;1&family=EB+Garamond:ital@0;1&display=swap">
+<link rel="stylesheet" href="/engine/editor/editor.css">
+</head>
+<body>
+<header class="top">
+  <a class="back" href="/" title="All your videos">← Your videos</a>
+  <span class="name" id="pname"></span>
+  <span class="sp"></span>
+  <span class="saved" id="saved">All changes saved</span>
+  <button class="icon" id="undo" aria-label="Undo" title="Undo (⌘Z)">↶</button>
+  <button class="icon" id="redo" aria-label="Redo" title="Redo (⇧⌘Z)">↷</button>
+  <button class="primary" id="exportTop">Export</button>
+</header>
+
+<div class="body">
+  <nav class="rail" id="rail" aria-label="Steps"></nav>
+  <section class="panel" id="panel"></section>
+  <aside class="pv">
+    <div class="stage-wrap" id="stageWrap"><div class="ayr-stage" id="stage"></div></div>
+    <div class="transport">
+      <button class="round" id="play" aria-label="Play">▶</button>
+      <input type="range" id="scrub" min="0" max="1" step="0.01" value="0" aria-label="Time">
+      <span class="tm" id="tm">0:00</span>
+    </div>
+    <div class="pv-row"><label class="check"><input type="checkbox" id="safeBtn"> Show where Reels puts its buttons</label></div>
+    <div class="notes" id="notes"></div>
+  </aside>
+</div>
+
+<footer class="tl" id="tl">
+  <div class="tl-bar">
+    <b>Timeline</b>
+    <span class="hint" id="tlHint">Click to jump. Drag sounds from the Sounds step onto the Sounds row.</span>
+    <label class="zoom">Zoom <input type="range" id="tlZoom" min="16" max="160" value="40"></label>
+  </div>
+  <div class="tl-scroll" id="tlScroll"><div class="tl-inner" id="tlInner"></div></div>
+</footer>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="/engine/styles.js"></script>
+<script src="/engine/timeline.js"></script>
+<script src="/engine/render.js"></script>
+<script type="module" src="/engine/editor/editor.js"></script>
+</body>
+</html>
